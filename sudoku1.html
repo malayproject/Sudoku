@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            table, th, td {
+              border: 3px solid black;
+              border-collapse: collapse;
+            }
+        </style>
+        <script>
+            var grid = new Array(9);
+            function getRandomInt(maxExcl)  {
+                return 1+Math.floor(Math.random()*Math.floor(maxExcl));
+            }
+            for(var i = 0; i < grid.length; i++) {
+                grid[i] = new Array(9);
+                for(var j = 0; j < 9; j++)  {
+                    grid[i][j] = 0;
+                }
+            }
+            console.log(grid);
+            console.log('work started')
+            for(var i = 0; i < 9; i++) {
+                console.log('i: '+i)
+                for(var j = 0; j < 9; j++)  {
+                    var mySet = new Set();
+                    var x = getRandomInt(9);
+                    mySet.add(x);
+                    while(!valid(grid, i, j, x)) {
+                        // console.log("working");
+                        x = getRandomInt(9);
+                        while(mySet.has(x))
+                            x = getRandomInt(9);
+                        mySet.add(x);
+                        // console.log("still working")
+                    }
+                    grid[i][j] = x;
+                }
+            }
+            console.log("work done")
+            function valid(a, row, col, val)    {
+                for(var i = 0; i < 9; i++)  {
+                    if(a[i][col]==val)
+                    return false;
+                }
+                for(var i = 0; i < 9; i++)  {
+                    if(a[row][i]==val)
+                    return false;
+                }
+                var startRow = (row/3)*3;
+                var startCol = (col/3)*3;
+                for(var x = startRow; x < startRow+3; x++)  {
+                    for(var y = startCol; y < startCol+3; y++)  {
+                        if(a[x][y] == val)
+                            return false;
+                    }
+                }
+                return true;
+            }
+            //console.log(grid);
+            function buildSudokuGridData(grid) {
+                var str = new String("");
+                str += "<table>";
+                for(var i = 0;i < 9; i++)   {
+                    str += "<tr>";
+                    for(var j = 0; j < 9; j++)  {
+                        str += "<td>";
+                        str += grid[i][j];
+                        str += "</td>";
+                    }
+                    str += "</tr>";
+                }
+                str += "</table>";
+                return str;
+            }
+            function printGrid()    {
+                var data = document.getElementById("sudokuGridPara");
+                console.log(data.innerHTML);
+                data.innerHTML = buildSudokuGridData(grid);
+                console.log(data.innerHTML);
+            }
+            setTimeout(printGrid, 1000);
+        </script>
+    </head>
+    <p id="sudokuGridPara">
+        waiting for sudoku grid...
+    </p>
+</html>
