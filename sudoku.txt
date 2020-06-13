@@ -10,7 +10,7 @@
         <script>
             var grid = new Array(9);
             var flag = false;
-            function getRandomInt(maxExcl)  {
+            var getRandomInt = function(maxExcl)  {
                 return 1+Math.floor(Math.random()*Math.floor(maxExcl));
             }
             var initGrid = function(grid)   {
