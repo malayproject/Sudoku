@@ -9,7 +9,7 @@
                     if(typeof grid[i] == "undefined")
                         grid[i] = new Array(9);
                     for(var j = 0; j < 9; j++)  {
-                        grid[i][j] = 0;
+                        grid[i][j] = " ";
                     }
                 }
             }
@@ -37,7 +37,7 @@
                     var x = getRandomInt(9);
                     while(!unUsed.has(x) || !valid(row, col, x)) {
                         if(unUsed.size == 0)  {
-                            solGrid[row][col] = 0;
+                            solGrid[row][col] = " ";
                             return;
                         }
                         if(!valid(row, col, x) && unUsed.has(x))   {
@@ -79,7 +79,7 @@
                 for(var i = 0; i < 30; i++) {
                     var currRow = getRandomInt(9)-1;
                     var currCol = getRandomInt(9)-1;
-                    while(quesGrid[currRow][currCol] != 0)  {
+                    while(quesGrid[currRow][currCol] != " ")  {
                     currRow = getRandomInt(9)-1;
                     currCol = getRandomInt(9)-1;
                     }
