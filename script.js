@@ -35,12 +35,12 @@
                 
                 while(unUsed.size != 0)   {
                     var x = getRandomInt(9);
-                    while(!unUsed.has(x) || !valid(row, col, x)) {
+                    while(!unUsed.has(x) || !valid(solGrid, row, col, x)) {
                         if(unUsed.size == 0)  {
                             solGrid[row][col] = " ";
                             return;
                         }
-                        if(!valid(row, col, x) && unUsed.has(x))   {
+                        if(!valid(solGrid, row, col, x) && unUsed.has(x))   {
                             unUsed.delete(x);
                         }
                         x = getRandomInt(9);
@@ -55,28 +55,28 @@
                     }
                 }
             }
-            var valid = function(row, col, val)    {
+            var valid = function(grid, row, col, val)    {
                 for(var i = 0; i < 9; i++)  {
-                    if(solGrid[i][col]==val)
+                    if(grid[i][col]==val)
                     return false;
                 }
                 for(var i = 0; i < 9; i++)  {
-                    if(solGrid[row][i]==val)
+                    if(grid[row][i]==val)
                     return false;
                 }
                 var startRow = Math.floor(row/3)*3;
                 var startCol = Math.floor(col/3)*3;
                 for(var x = startRow; x < startRow+3; x++)  {
                     for(var y = startCol; y < startCol+3; y++)  {
-                        if(solGrid[x][y] == val)
+                        if(grid[x][y] == val)
                             return false;
                     }
                 }
                 return true;
             }
             var sudokuQuesBuilder = function()  {
-                var diff = 25;
-                for(var i = 0; i < 30; i++) {
+                var diff = 77;
+                for(var i = 0; i < diff; i++) {
                     var currRow = getRandomInt(9)-1;
                     var currCol = getRandomInt(9)-1;
                     while(quesGrid[currRow][currCol] != " ")  {
@@ -88,25 +88,67 @@
                 console.log(quesGrid);
             }
             var buildSudokuGridData = function(grid) {
-
+                var unfilledCells = [];
                 var str = new String("");
                 str += "<table>";
                 for(var i = 0;i < 9; i++)   {
-                    str += "<tr>";
+                    str += '<tr class="row">';
                     for(var j = 0; j < 9; j++)  {
-                        str += "<td>";
-                        str += grid[i][j];
+                        if(grid[i][j] == " ")   {
+                            str += '<td id="c'+i+''+j+' class="cell">';
+                            str += '<input id="c'+i+''+j+'ip" class="cellIp">';
+                            unfilledCells.push([i, j]);
+                        }
+                        else{
+                            str += '<td class="cell">';
+                            str += grid[i][j];
+                        }
+                        
                         str += "</td>";
                     }
                     str += "</tr>";
                 }
                 str += "</table>";
-                return str;
+                return [str, unfilledCells];    
+            }
+            var unfilledCellsContains = function(unfilledCells, i, j)  {
+                for(var k = 0; k < unfilledCells.length; k++)   {
+                    if(unfilledCells[k][0] == i && unfilledCells[k][1] == j)    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+            var eventListenerAdder = function(unfilledCells)    {
+                for(var i = 0; i < unfilledCells.length; i++)   {
+                    var elementId = "c"+unfilledCells[i][0]+""+unfilledCells[i][1]+"ip";
+                    cellInputElement = document.getElementById(elementId);
+                    cellInputElement.addEventListener("input", checkInput.bind(event, cellInputElement, unfilledCells[i]));
+                }
+            }
+            var checkInput = function(cellInputElement, currUnfilledCell)    {
+                var inputVal = cellInputElement.value;
+                var row = currUnfilledCell[0];
+                var col = currUnfilledCell[1];
+                if(isNaN(inputVal) || inputVal == 0) {
+                    cellInputElement.value = "";
+                    return;
+                }
+                if(valid(quesGrid, row, col, inputVal)) {
+                    cellInputElement.value = inputVal;
+                    
+                }
+                else    {
+                    cellInputElement.value = "";
+                }
+                // printQuesGrid();
             }
             var printQuesGrid = function()  {
                 var data = document.getElementById("sudokuGridPara");
                 console.log(data.innerHTML);
-                data.innerHTML = buildSudokuGridData(quesGrid);
+                var quesGridData = buildSudokuGridData(quesGrid);
+                data.innerHTML = quesGridData[0];
+                eventListenerAdder(quesGridData[1]);
                 console.log(data.innerHTML);
             }
             var printSolGrid = function()    {
@@ -130,7 +172,7 @@
             var clicker = function()    {
                 //console.log("button clicked");
                 init();
-                setTimeout(initSolution, 2000);
+                setTimeout(initSolution, 300000);
             }
             var buttonElement ;
             function init2()  {
